@@ -156,7 +156,7 @@ fun AddEditTravelScreen(
                             .padding(all = 10.dp)
                             .fillMaxWidth(),
                         labelResId = R.string.travel_id,
-                        readOnly = true,
+                        readOnly = isEdit,
                         inputWrapper = id,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -174,7 +174,7 @@ fun AddEditTravelScreen(
                         modifier = Modifier
                             .padding(all = 10.dp)
                             .fillMaxWidth(),
-                        labelResId = R.string.travel_duration,
+                        labelResId = R.string.travel_destination,
                         inputWrapper = destination,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
