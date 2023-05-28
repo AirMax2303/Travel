@@ -52,7 +52,7 @@ fun AppRouter(
         ) {
             val isEdit = it.arguments?.getBoolean("isEdit")
             val travelId = it.arguments?.getString("travelId")
-            AddEditTravelScreen(navController, travelViewModel, travelId, isEdit!!)
+            AddEditTravelScreen(navController, travelViewModel, jsonViewModel, travelId, isEdit!!)
         }
         composable(route = AppScreens.TravelDetailScreen.route + "/{travelId}",
             arguments = listOf(

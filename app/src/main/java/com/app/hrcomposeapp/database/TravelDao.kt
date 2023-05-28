@@ -14,6 +14,9 @@ interface TravelDao {
     @Query("SELECT * FROM travels")
     fun getAllTravels(): List<Travel>
 
+    @Query("SELECT category FROM travels GROUP BY category")
+    fun getAllTravelsFromCategory(): List<Travel>
+
     @Update
     suspend fun updateTravelDetails(Travel: Travel)
 
@@ -25,4 +28,7 @@ interface TravelDao {
 
     @Query("SELECT * FROM travels WHERE id = :Id")
     fun findTravelById(Id: String): Travel
+
+    @Query("SELECT * FROM travels WHERE category = :category")
+    fun findTravelByCategory(category: String): Travel
 }

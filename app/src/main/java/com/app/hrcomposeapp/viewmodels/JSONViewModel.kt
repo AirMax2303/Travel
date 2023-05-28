@@ -14,7 +14,7 @@ class JSONViewModel(private val repoJSON: RepoJSON): ViewModel() {
     val foundTravel: LiveData<Travel> = repoJSON.foundTravel
     var errorMessage: LiveData<String> = repoJSON.errorMessage
 
-    fun addTravel(travel: Travel) {
+    suspend fun addTravel(travel: Travel) {
         repoJSON.addTravel(travel)
     }
     fun updateTravel(travel: Travel) {
