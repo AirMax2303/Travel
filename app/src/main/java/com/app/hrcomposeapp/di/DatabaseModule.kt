@@ -2,8 +2,8 @@ package com.app.hrcomposeapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.app.hrcomposeapp.database.EmployeeDao
 import com.app.hrcomposeapp.database.EmployeeRoomDatabase
+import com.app.hrcomposeapp.database.TravelDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,8 +16,8 @@ import javax.inject.Singleton
 private object DatabaseModule {
 
     @Provides
-    fun provideEmployeeDao(appDatabase: EmployeeRoomDatabase): EmployeeDao {
-        return appDatabase.employeeDao()
+    fun provideTravelDao(appDatabase: EmployeeRoomDatabase): TravelDao {
+        return appDatabase.travelDao()
     }
 
     @Provides

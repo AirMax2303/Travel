@@ -17,17 +17,13 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.app.hrcomposeapp.R
 import com.app.hrcomposeapp.utils.AppScreens
+import com.app.hrcomposeapp.R
 
 
 private val screens = listOf(
-    AppScreens.HomeScreen,
-    AppScreens.Account,
-    AppScreens.Contact,
-    AppScreens.Help
+    AppScreens.TravelScreen
 )
 
 @Composable
@@ -83,14 +79,5 @@ fun Drawer(
             Divider(color = Color.LightGray)
         }
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Developed by Mansi S. & Dharmesh B. \nV (1.0)",
-            color = Color.Gray,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption,
-            modifier = Modifier
-                .padding(12.dp)
-                .align(Alignment.CenterHorizontally)
-        )
     }
 }

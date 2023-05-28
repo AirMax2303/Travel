@@ -1,17 +1,16 @@
 <resources>
-    <string name="app_name">HR Compose App</string>
-    <string name="title_activity_home">HomeActivity</string>
+    <string name="app_name">Туристические направления</string>
+    <string name="pg_json">Внешние данные</string>
+    <string name="travel_id">id</string>
+    <string name="travel_destination">Направление</string>
+    <string name="travel_name">Отель</string>
+    <string name="travel_country">Страна</string>
+    <string name="travel_category">Категория</string>
+    <string name="travel_duration">Продолжительность</string>
+    <string name="travel_price">Цена</string>
+    <string name="add_travel">Путешевствие</string>
+    <string name="back">Назад</string>
+    <string name="desc_add_fab">Добавить</string>
 
-    <string name="emp_name">Employee Name</string>
-    <string name="emp_designation">Employee Designation</string>
-    <string name="emp_exp">Employee Experience (in years)</string>
-    <string name="emp_id">Employee ID</string>
-    <string name="email_id">Email ID</string>
-    <string name="phone_no">Phone Number</string>
-    <string name="desc_add_fab">Add FAB</string>
-    <string name="add_employee">Add Employee</string>
-    <string name="back">back</string>
-    <string name="contact_query">Concern/feedback</string>
-    <string name="customer_feedback">Customer Feedback</string>
 
 </resources>

@@ -21,6 +21,7 @@ fun CustomTextField(
     @StringRes labelResId: Int,
     maxLength: Int,
     maxLines: Int,
+    readOnly: Boolean = false,
     onTextChanged: (String) -> Unit
 ) {
     var fieldValue by remember { mutableStateOf(inputWrapper) }
@@ -28,6 +29,7 @@ fun CustomTextField(
     Column {
         OutlinedTextField(
             value = fieldValue,
+            readOnly = readOnly,
             label = { Text(stringResource(labelResId), style = MaterialTheme.typography.caption) },
             maxLines = maxLines,
             keyboardOptions = keyboardOptions,

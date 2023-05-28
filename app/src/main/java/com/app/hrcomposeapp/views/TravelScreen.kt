@@ -1,9 +1,8 @@
 package com.app.hrcomposeapp.views
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,51 +10,65 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.app.hrcomposeapp.R
-import com.app.hrcomposeapp.database.Employee
+//import com.app.travel.R
+import com.app.hrcomposeapp.database.Travel
+import com.app.hrcomposeapp.database.TravelJSON
 import com.app.hrcomposeapp.utils.AppScreens
 import com.app.hrcomposeapp.utils.CustomToolbar
-import com.app.hrcomposeapp.viewmodels.HomeViewModel
+import com.app.hrcomposeapp.viewmodels.JSONViewModel
+import com.app.hrcomposeapp.viewmodels.TravelViewModel
+import kotlinx.coroutines.launch
 
+
+@RequiresApi(Build.VERSION_CODES.N)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(
+fun TravelScreen(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
-    openDrawer: () -> Unit
+    travelViewModel: TravelViewModel,
 ) {
-    homeViewModel.getAllEmployees()
+
+    travelViewModel.getAllTravels()
+
+    val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
-    Scaffold(
-        topBar = {
-            CustomToolbar(title = stringResource(id = R.string.app_name), openDrawer)
-        },
+    Scaffold(topBar = {
+        CustomToolbar(title = stringResource(id = R.string.app_name))
+    },
         content = {
-            val employeeList: List<Employee> by homeViewModel.employeeList.observeAsState(initial = listOf())
-            if (employeeList.isNotEmpty()) {
+            val travelList: List<Travel> by travelViewModel.travelList.observeAsState(initial = listOf())
+            if (travelList.isNotEmpty()) {
                 Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
                     LazyColumn(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        state = lazyListState
+                        modifier = Modifier.padding(vertical = 4.dp), state = lazyListState
                     ) {
-                        items(items = employeeList) { emp ->
-                            EmployeeCard(employee = emp, navController = navController)
+                        items(items = travelList) { travel ->
+                            travelCard(
+                                travelViewModel = travelViewModel,
+                                travel = travel,
+                                navController = navController
+                            )
                         }
                     }
                 }
@@ -68,47 +81,50 @@ fun HomeScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        "No employees onboarded yet.",
+                        " Записей нет",
                         fontSize = 20.sp,
                         modifier = Modifier
                             .wrapContentWidth()
                             .wrapContentHeight(),
                         textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = {navController.navigate(AppScreens.JSONScreen.route)},
+                    ) {
+                        Text(
+                            text = "Загрузить",
+                            fontSize = 16.sp,
+                        )
+                    }
+
                 }
             }
         },
-        // Use `FloatingActionButton` rather than `ExtendedFloatingActionButton` for full control on
-        // how it should animate.
+
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    navController.navigate(AppScreens.AddEditEmployeeScreen.route + "/" + "0" + "/" + false)
+            Row() {
+                FloatingActionButton(onClick = {
+                    navController.navigate(AppScreens.AddEditTravelScreen.route + "/" + "0" + "/" + false)
                 }) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_baseline_add_24),
                         contentDescription = stringResource(id = R.string.desc_add_fab),
                     )
-                    // Toggle the visibility of the content with animation.
-                    AnimatedVisibility(visible = !lazyListState.isScrollingUp()) {
-                        Text(
-                            text = stringResource(R.string.add_employee),
-                            modifier = Modifier
-                                .padding(start = 8.dp, top = 3.dp)
-                        )
+                }
+                FloatingActionButton(onClick = {
+//                    travelViewModel.travelList.observeForever {
+                    coroutineScope.launch {
+                        travelViewModel.deleteAllTravel()
                     }
+//                    }
+                }) {
+                    Text(text = "  Удалить ВСЕ  ")
                 }
             }
-        }
-    )
+        })
 }
 
-/**
- * Returns whether the lazy list is currently scrolling up.
- */
 @Composable
 private fun LazyListState.isScrollingUp(): Boolean {
     var previousIndex by remember(this) { mutableStateOf(firstVisibleItemIndex) }
@@ -128,8 +144,7 @@ private fun LazyListState.isScrollingUp(): Boolean {
 }
 
 @Composable
-fun EmployeeCard(employee: Employee, navController: NavHostController) {
-    val expanded by remember { mutableStateOf(true) }
+fun travelCard(travelViewModel: TravelViewModel, travel: Travel, navController: NavHostController) {
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -138,49 +153,46 @@ fun EmployeeCard(employee: Employee, navController: NavHostController) {
         backgroundColor = Color.White,
         elevation = 2.dp
     ) {
-        Column(
-            modifier = Modifier
-                .padding(20.dp)
-                .clickable {
-                    navController.navigate(
-                        AppScreens.EmployeeDetailScreen.routeWithArgs(
-                            employee.employeeId.toString()
-                        )
-                    )
-                }
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
+        Column(modifier = Modifier
+            .padding(20.dp)
+            .clickable {
+                navController.navigate(
+                    AppScreens.TravelDetailScreen.routeWithArgs(
+                        travel.id
                     )
                 )
+            }
         ) {
             Row {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_baseline_person_pin_24),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.tint(
-                        colorResource(id = R.color.primaryColor),
-                    ),
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(50)),
-                )
                 Spacer(modifier = Modifier.width(20.dp))
                 Column {
                     Text(
-                        text = employee.employeeName,
+                        text = travel.name,
                         fontSize = 18.sp,
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    if (expanded) {
-                        Text(
-                            text = employee.employeeDesignation,
-                            fontSize = 14.sp,
-                        )
+                    Text(
+                        text = travel.destination,
+                        fontSize = 14.sp,
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column() {
+                    Text(
+                        text = travel.price,
+                        fontSize = 18.sp,
+                    )
+                }
+/*
+                Column() {
+                    IconButton(
+                        onClick = { travelViewModel.deleteTravel(travel) }
+                    ) {
+                        Icon(Icons.Filled.Info, contentDescription = "Информация о приложении")
                     }
                 }
+
+ */
             }
         }
     }

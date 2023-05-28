@@ -1,7 +1,7 @@
 package com.app.hrcomposeapp.di
 
-import com.app.hrcomposeapp.database.EmployeeDao
-import com.app.hrcomposeapp.repository.EmployeeRepository
+import com.app.hrcomposeapp.database.TravelDao
+import com.app.hrcomposeapp.repository.TravelRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,8 +14,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideEmployeeRepository(employeeDao: EmployeeDao): EmployeeRepository {
-        return EmployeeRepository(employeeDao)
+    fun provideTravelRepository(travelDao: TravelDao): TravelRepository {
+        return TravelRepository(travelDao)
     }
-
 }

@@ -1,33 +1,37 @@
 package com.app.hrcomposeapp.views
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.app.hrcomposeapp.utils.AppScreens
-import com.app.hrcomposeapp.viewmodels.HomeViewModel
+import com.app.hrcomposeapp.viewmodels.JSONViewModel
+import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
+@RequiresApi(Build.VERSION_CODES.N)
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppRouter(
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
-    openDrawer: () -> Unit
+    travelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
 ) {
-    AnimatedNavHost(navController, startDestination = AppScreens.HomeScreen.route) {
-        composable(route = AppScreens.AddEditEmployeeScreen.route + "/{empId}/{isEdit}",
+    AnimatedNavHost(navController, startDestination = AppScreens.TravelScreen.route) {
+
+        composable(route = AppScreens.TravelScreen.route) {
+            TravelScreen(navController, travelViewModel)
+        }
+        composable(route = AppScreens.JSONScreen.route) {
+            JSONlScreen(navController, travelViewModel, jsonViewModel)
+        }
+        composable(route = AppScreens.AddEditTravelScreen.route + "/{travelId}/{isEdit}",
             arguments = listOf(
-                navArgument("empId") {
+                navArgument("travelId") {
                     type = NavType.StringType
                     defaultValue = ""
                 },
@@ -47,55 +51,21 @@ fun AppRouter(
             }
         ) {
             val isEdit = it.arguments?.getBoolean("isEdit")
-            val empId = it.arguments?.getString("empId")
-            AddEditEmployeeScreen(navController, homeViewModel, empId, isEdit!!)
+            val travelId = it.arguments?.getString("travelId")
+            AddEditTravelScreen(navController, travelViewModel, travelId, isEdit!!)
         }
-        composable(route = AppScreens.EmployeeDetailScreen.route + "/{empId}",
+        composable(route = AppScreens.TravelDetailScreen.route + "/{travelId}",
             arguments = listOf(
-                navArgument("empId") {
+                navArgument("travelId") {
                     type = NavType.StringType
                     defaultValue = ""
                     nullable = true
                 }
             )) {
-            val empId = it.arguments?.getString("empId")
-            EmployeeDetailScreen(navController, homeViewModel, empId)
-        }
-        composable(route = AppScreens.HomeScreen.route) {
-            HomeScreen(navController, homeViewModel, openDrawer)
-        }
-        composable(route = AppScreens.Account.route) {
-            AccountScreen(navController, homeViewModel, openDrawer)
-        }
-        composable(route = AppScreens.Help.route) {
-            HelpScreen(navController, homeViewModel, openDrawer)
-        }
-        composable(route = AppScreens.Contact.route) {
-            ContactUsScreen(navController, homeViewModel, openDrawer)
+            val travelId = it.arguments?.getString("travelId")
+            TravelDetailScreen(navController, travelViewModel, travelId)
         }
     }
 
 }
 
-@Composable
-fun EnterAnimation(content: @Composable () -> Unit) {
-    val visible by remember { mutableStateOf(true) }
-    val density = LocalDensity.current
-    AnimatedVisibility(
-        visible = visible,
-        enter = slideInVertically {
-            // Slide in from 40 dp from the top.
-            with(density) { -40.dp.roundToPx() }
-        } + expandVertically(
-            // Expand from the top.
-            expandFrom = Alignment.Top
-        ) + fadeIn(
-            // Fade in with the initial alpha of 0.3f.
-            initialAlpha = 0.3f,
-            animationSpec = tween(500, 500)
-        ),
-        exit = slideOutVertically() + shrinkVertically() + fadeOut()
-    ) {
-        content()
-    }
-}
