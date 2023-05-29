@@ -1,18 +1,23 @@
 package com.app.hrcomposeapp.views
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import com.app.hrcomposeapp.viewmodels.CategoryViewModel
 import com.app.hrcomposeapp.viewmodels.JSONViewModel
 //import com.app.hrcomposeapp.viewmodels.TravelJSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.N)
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppMainScreen(
+    categoryViewModel: CategoryViewModel,
     travelViewModel: TravelViewModel,
     jsonViewModel: JSONViewModel,
 ) {
@@ -48,7 +53,8 @@ fun AppMainScreen(
             }
         ) {
             AppRouter(
-                navController,
+                navController = navController,
+                categoryViewModel = categoryViewModel,
                 travelViewModel = travelViewModel,
                 jsonViewModel = jsonViewModel,
             )

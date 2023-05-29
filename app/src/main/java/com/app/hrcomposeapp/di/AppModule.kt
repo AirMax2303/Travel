@@ -1,6 +1,7 @@
 package com.app.hrcomposeapp.di
 
 import com.app.hrcomposeapp.database.TravelDao
+import com.app.hrcomposeapp.repository.CategoryRepository
 import com.app.hrcomposeapp.repository.TravelRepository
 import dagger.Module
 import dagger.Provides
@@ -16,5 +17,11 @@ object AppModule {
     @Provides
     fun provideTravelRepository(travelDao: TravelDao): TravelRepository {
         return TravelRepository(travelDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCategoryRepository(travelDao: TravelDao): CategoryRepository {
+        return CategoryRepository(travelDao)
     }
 }

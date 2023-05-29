@@ -37,6 +37,12 @@ data class Travel(
 
     ) : Parcelable
 
+@Parcelize
+data class Category(
+    @ColumnInfo(name = "category")
+    var category: String,
+) : Parcelable
+
 data class TravelJSON(
     val id: String,
     val destination: String,

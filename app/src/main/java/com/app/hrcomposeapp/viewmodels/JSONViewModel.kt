@@ -17,10 +17,10 @@ class JSONViewModel(private val repoJSON: RepoJSON): ViewModel() {
     suspend fun addTravel(travel: Travel) {
         repoJSON.addTravel(travel)
     }
-    fun updateTravel(travel: Travel) {
+    suspend fun updateTravel(travel: Travel) {
         repoJSON.updateTravel(travel)
     }
-    fun deleteTravel(travel: Travel) {
+    suspend fun deleteTravel(travel: Travel) {
         repoJSON.deleteTravel(travel)
     }
     fun getAllTravels() {

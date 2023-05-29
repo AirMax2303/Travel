@@ -30,30 +30,6 @@ interface ApiService {
 }
 
 
-data class AddJSON (
-    @SerializedName("destination")
-    val destination: String,
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("country")
-    val country: String,
-    @SerializedName("category")
-    val category: String,
-    @SerializedName("duration")
-    val duration: String,
-    @SerializedName("price")
-    val price: String,
-) {
-    constructor(travel: Travel) : this(
-        destination = travel.destination,
-        name = travel.name,
-        country = travel.country,
-        category = travel.category,
-        duration = travel.duration,
-        price = travel.price
-    )
-}
-
 interface ApiServiceAdd {
 
     @POST(".")
@@ -72,6 +48,31 @@ interface ApiServiceAdd {
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build().create(ApiServiceAdd::class.java)
+            }
+            return retrofit!!
+        }
+    }
+}
+
+
+interface ApiServiceDelete {
+
+    @POST(".")
+    @FormUrlEncoded
+//    suspend fun addTravel(@Body addJSON: AddJSON)
+    suspend fun deleteTravel(@FieldMap params: Map<String,String>)
+
+    companion object {
+        private var retrofit: ApiServiceDelete? = null
+        private val interceptor = HttpLoggingInterceptor()
+        private val client = OkHttpClient.Builder().addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)).build()
+        fun getInstance(): ApiServiceDelete {
+            if (retrofit == null) {
+                retrofit = Retrofit.Builder()
+                    .baseUrl("http://science-art.pro/travel_delete.php/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
+                    .build().create(ApiServiceDelete::class.java)
             }
             return retrofit!!
         }

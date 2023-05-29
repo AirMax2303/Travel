@@ -11,6 +11,8 @@ sealed class AppScreens(val title: String, val route: String, var icon: ImageVec
 
     object TravelScreen : AppScreens("Путешествия", "travel", Icons.Default.AccountCircle)
 
+    object CategoryScreen : AppScreens("Катерии", "category", Icons.Default.AccountCircle)
+
     object JSONScreen : AppScreens("JSON Путешествия", "json", Icons.Default.AccountCircle)
 
     object TravelDetailScreen :

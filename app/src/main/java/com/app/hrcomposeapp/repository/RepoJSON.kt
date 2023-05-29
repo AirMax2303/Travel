@@ -1,6 +1,5 @@
 package com.app.hrcomposeapp.repository
 
-import AddJSON
 import ApiService
 import ApiService.Companion.apiService
 import android.util.Log
@@ -36,10 +35,20 @@ class RepoJSON(
         }
     }
 
-    fun updateTravel(travel: Travel) {
+    suspend fun updateTravel(travel: Travel) {
+
     }
 
-    fun deleteTravel(travel: Travel) {
+    suspend fun deleteTravel(travel: Travel) {
+        try {
+            val retrofit = ApiServiceDelete.getInstance()
+            val m = mapOf<String,String>(
+                "id" to travel.id,
+            )
+            val response = retrofit.deleteTravel(m)
+        } catch (e: Exception) {
+            errorMessage.value = e.message.toString()
+        }
     }
 
     suspend fun getAllTravels() {

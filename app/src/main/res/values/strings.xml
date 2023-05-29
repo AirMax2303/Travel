@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Туристические направления</string>
     <string name="pg_json">Внешние данные</string>
+    <string name="category">Категории</string>
     <string name="travel_id">id</string>
     <string name="travel_destination">Направление</string>
     <string name="travel_name">Отель</string>

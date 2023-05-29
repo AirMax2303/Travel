@@ -36,6 +36,7 @@ import com.app.hrcomposeapp.database.Travel
 import com.app.hrcomposeapp.database.TravelJSON
 import com.app.hrcomposeapp.utils.AppScreens
 import com.app.hrcomposeapp.utils.CustomToolbar
+import com.app.hrcomposeapp.utils.CustomToolbarWithBackArrow
 import com.app.hrcomposeapp.viewmodels.JSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import kotlinx.coroutines.launch
@@ -47,14 +48,18 @@ import kotlinx.coroutines.launch
 fun TravelScreen(
     navController: NavHostController,
     travelViewModel: TravelViewModel,
+    category: String,
 ) {
 
-    travelViewModel.getAllTravels()
+    travelViewModel.getTravelsByCategory(category)
 
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     Scaffold(topBar = {
-        CustomToolbar(title = stringResource(id = R.string.app_name))
+        CustomToolbarWithBackArrow(
+            title = stringResource(id = R.string.app_name),
+            navController = navController
+        )
     },
         content = {
             val travelList: List<Travel> by travelViewModel.travelList.observeAsState(initial = listOf())
@@ -88,16 +93,6 @@ fun TravelScreen(
                             .wrapContentHeight(),
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        onClick = {navController.navigate(AppScreens.JSONScreen.route)},
-                    ) {
-                        Text(
-                            text = "Загрузить",
-                            fontSize = 16.sp,
-                        )
-                    }
-
                 }
             }
         },

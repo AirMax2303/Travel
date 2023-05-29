@@ -42,6 +42,12 @@ class TravelRepository(private val TravelDao: TravelDao) {
         }
     }
 
+    fun getTravelsByCategory(category: String) {
+        coroutineScope.launch(Dispatchers.IO) {
+            allTravels.postValue(TravelDao.getTravelsByCategory(category))
+        }
+    }
+
     fun deleteTravel(Travel: Travel) {
         coroutineScope.launch(Dispatchers.IO) {
             TravelDao.deleteTravel(Travel)

@@ -21,13 +21,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,47 +36,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavHostController
 import com.app.hrcomposeapp.R
-import com.app.hrcomposeapp.database.Travel
+import com.app.hrcomposeapp.database.Category
 import com.app.hrcomposeapp.utils.AppScreens
 import com.app.hrcomposeapp.utils.CustomToolbar
-import com.app.hrcomposeapp.utils.CustomToolbarWithBackArrow
-import com.app.hrcomposeapp.viewmodels.JSONViewModel
+import com.app.hrcomposeapp.viewmodels.CategoryViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import kotlinx.coroutines.launch
 
+class CategoryScreen {
+}
+
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun JSONlScreen(
+fun CategoryScreen(
     navController: NavHostController,
-    travelViewModel: TravelViewModel,
-    jsonViewModel: JSONViewModel,
+    categoryViewModel: CategoryViewModel,
 ) {
 
-    jsonViewModel.getAllTravels()
-    val travelList: List<Travel> by jsonViewModel.travelList.observeAsState(initial = listOf())
+    categoryViewModel.getCategoryes()
 
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
-    Scaffold(topBar = {
-        CustomToolbarWithBackArrow(
-            title = stringResource(id = R.string.pg_json),
-            navController = navController
-        )
-    },
+    Scaffold(
+        topBar = {
+            CustomToolbar(title = stringResource(id = R.string.category))
+        },
         content = {
 
-            if (travelList.isNotEmpty()) {
+            val categoryList: List<Category> by categoryViewModel.categoryList.observeAsState(initial = listOf())
+
+            if (categoryList.isNotEmpty()) {
                 Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
                     LazyColumn(
                         modifier = Modifier.padding(vertical = 4.dp), state = lazyListState
                     ) {
-                        items(items = travelList) { travel ->
-                            JSONCard(
-                                travelViewModel = jsonViewModel,
-                                travel = travel,
+                        items(items = categoryList) { category ->
+                            categoryCard(
+                                categoryViewModel = categoryViewModel,
+                                category = category.category,
                                 navController = navController
                             )
                         }
@@ -95,23 +90,30 @@ fun JSONlScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        " Данных нет ",
+                        " Категорий нет",
                         fontSize = 20.sp,
                         modifier = Modifier
                             .wrapContentWidth()
                             .wrapContentHeight(),
                         textAlign = TextAlign.Center
                     )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = { navController.navigate(AppScreens.JSONScreen.route) },
+                    ) {
+                        Text(
+                            text = "Загрузить",
+                            fontSize = 16.sp,
+                        )
+                    }
+
                 }
             }
         },
-
         floatingActionButton = {
             Row() {
                 FloatingActionButton(onClick = {
-                    if (travelList.isNotEmpty()) {
-                        travelViewModel.addListTravel(travelList)
-                    }
+                    navController.navigate(AppScreens.AddEditTravelScreen.route + "/" + "0" + "/" + false)
                 }) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_baseline_add_24),
@@ -120,10 +122,15 @@ fun JSONlScreen(
                 }
             }
         })
+
 }
 
 @Composable
-fun JSONCard(travelViewModel: JSONViewModel, travel: Travel, navController: NavHostController) {
+fun categoryCard(
+    categoryViewModel: CategoryViewModel,
+    category: String,
+    navController: NavHostController
+) {
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -134,28 +141,16 @@ fun JSONCard(travelViewModel: JSONViewModel, travel: Travel, navController: NavH
     ) {
         Column(modifier = Modifier
             .padding(20.dp)
-        ) {
-            Row {
-                Spacer(modifier = Modifier.width(20.dp))
-                Column {
-                    Text(
-                        text = travel.name,
-                        fontSize = 18.sp,
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(
-                        text = travel.destination,
-                        fontSize = 14.sp,
-                    )
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-                Column() {
-                    Text(
-                        text = travel.price,
-                        fontSize = 18.sp,
-                    )
-                }
+            .clickable {
+                navController.navigate(
+                    AppScreens.TravelScreen.routeWithArgs(category)
+                )
             }
+        ) {
+            Text(
+                text = category,
+                fontSize = 30.sp,
+            )
         }
     }
 }

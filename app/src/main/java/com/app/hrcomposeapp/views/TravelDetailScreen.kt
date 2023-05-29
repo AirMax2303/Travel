@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,17 +20,21 @@ import com.app.hrcomposeapp.utils.AppScreens
 import com.app.hrcomposeapp.utils.CustomToolbarWithBackArrow
 import com.app.hrcomposeapp.viewmodels.JSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun TravelDetailScreen(
     navController: NavHostController,
     travelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
     TravelId: String?
 ) {
 
     travelViewModel.findTravelById(TravelId!!)
     val selectedTravel = travelViewModel.foundTravel.observeAsState().value
+
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(topBar = {
         CustomToolbarWithBackArrow(title = "Направление", navController = navController)
@@ -98,6 +103,9 @@ fun TravelDetailScreen(
                             Button(
                                 onClick = {
                                     travelViewModel.deleteTravel(selectedTravel)
+                                    coroutineScope.launch {
+//                                        jsonViewModel.deleteTravel(selectedTravel)
+                                    }
                                     navController.popBackStack()
                                 }, modifier = Modifier.weight(1f)
                             ) {

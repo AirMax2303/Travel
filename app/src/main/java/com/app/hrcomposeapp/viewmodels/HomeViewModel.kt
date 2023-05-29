@@ -23,6 +23,10 @@ class TravelViewModel @Inject constructor(private val travelRepository: TravelRe
         travelRepository.getAllTravels()
     }
 
+    fun getTravelsByCategory(category: String) {
+        travelRepository.getTravelsByCategory(category)
+    }
+
     fun addListTravel(list: List<Travel>) {
         viewModelScope.launch {
             travelRepository.addListTravel(list)

@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.app.hrcomposeapp.utils.AppScreens
+import com.app.hrcomposeapp.viewmodels.CategoryViewModel
 import com.app.hrcomposeapp.viewmodels.JSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -18,13 +19,27 @@ import com.google.accompanist.navigation.animation.composable
 @Composable
 fun AppRouter(
     navController: NavHostController,
+    categoryViewModel: CategoryViewModel,
     travelViewModel: TravelViewModel,
     jsonViewModel: JSONViewModel,
 ) {
-    AnimatedNavHost(navController, startDestination = AppScreens.TravelScreen.route) {
+    AnimatedNavHost(navController, startDestination = AppScreens.CategoryScreen.route) {
 
-        composable(route = AppScreens.TravelScreen.route) {
-            TravelScreen(navController, travelViewModel)
+        composable(route = AppScreens.CategoryScreen.route) {
+            CategoryScreen(navController, categoryViewModel)
+        }
+        composable(route = AppScreens.TravelScreen.route + "/{category}",
+            arguments = listOf(
+                navArgument("category") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )) {
+            val category = it.arguments?.getString("category")
+            if (category != null) {
+                TravelScreen(navController, travelViewModel, category)
+            }
         }
         composable(route = AppScreens.JSONScreen.route) {
             JSONlScreen(navController, travelViewModel, jsonViewModel)
@@ -63,7 +78,7 @@ fun AppRouter(
                 }
             )) {
             val travelId = it.arguments?.getString("travelId")
-            TravelDetailScreen(navController, travelViewModel, travelId)
+            TravelDetailScreen(navController, travelViewModel, jsonViewModel, travelId)
         }
     }
 
