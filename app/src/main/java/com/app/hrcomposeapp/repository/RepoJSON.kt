@@ -1,8 +1,9 @@
 package com.app.hrcomposeapp.repository
 
+import AddJSON
 import ApiService
 import ApiService.Companion.apiService
-import ApiServiceJSON
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.app.hrcomposeapp.database.Travel
@@ -17,7 +18,22 @@ class RepoJSON(
     val foundTravel = MutableLiveData<Travel>()
     val errorMessage = MutableLiveData<String>()
 
-    fun addTravel(travel: Travel) {
+    suspend fun addTravel(travel: Travel) {
+        try {
+            val retrofit = ApiServiceAdd.getInstance()
+            val m = mapOf<String,String>(
+                "destination" to travel.destination,
+                "name" to travel.name,
+                "country" to travel.country,
+                "category" to travel.category,
+                "duration" to travel.duration,
+                "price" to travel.price
+            )
+            val response = retrofit.addTravel(m)
+            Log.d("addTravel", response.toString())
+        } catch (e: Exception) {
+            errorMessage.value = e.message.toString()
+        }
     }
 
     fun updateTravel(travel: Travel) {

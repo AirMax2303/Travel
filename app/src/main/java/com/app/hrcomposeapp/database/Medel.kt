@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 data class Travel(
 
     @PrimaryKey(autoGenerate = false)
-    @NonNull
+//    @NonNull
 
     @ColumnInfo(name = "id")
     var id: String,

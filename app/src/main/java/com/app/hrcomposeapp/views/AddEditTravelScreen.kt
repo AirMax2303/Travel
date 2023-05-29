@@ -43,6 +43,7 @@ import com.app.hrcomposeapp.database.Travel
 import com.app.hrcomposeapp.ui.theme.Shapes
 import com.app.hrcomposeapp.ui.theme.customWidget.CustomTextField
 import com.app.hrcomposeapp.utils.CustomToolbarWithBackArrow
+import com.app.hrcomposeapp.viewmodels.JSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -60,14 +61,15 @@ var price: String = ""
 fun AddEditTravelScreen(
     navController: NavHostController,
     TravelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
     TravelToEdit: String?,
     isEdit: Boolean
 ) {
     lateinit var selectedTravel: Travel
     val mContext = LocalContext.current
-    // The coroutine scope for event handlers calling suspend functions.
+
     val coroutineScope = rememberCoroutineScope()
-    // True if the message about the edit feature is shown.
+
     var validationMessageShown by remember { mutableStateOf(false) }
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
@@ -156,7 +158,7 @@ fun AddEditTravelScreen(
                             .padding(all = 10.dp)
                             .fillMaxWidth(),
                         labelResId = R.string.travel_id,
-                        readOnly = true,
+                        readOnly = isEdit,
                         inputWrapper = id,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -174,7 +176,7 @@ fun AddEditTravelScreen(
                         modifier = Modifier
                             .padding(all = 10.dp)
                             .fillMaxWidth(),
-                        labelResId = R.string.travel_duration,
+                        labelResId = R.string.travel_destination,
                         inputWrapper = destination,
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -290,10 +292,24 @@ fun AddEditTravelScreen(
                                 duration,
                                 price,
                             )
-                            if (isEdit) {
-                                updateTravelInDB(mContext, navController, Travel, TravelViewModel)
-                            } else {
-                                addTravelInDB(mContext, navController, Travel, TravelViewModel)
+                            coroutineScope.launch {
+                                if (isEdit) {
+                                    updateTravelInDB(
+                                        mContext,
+                                        navController,
+                                        Travel,
+                                        TravelViewModel,
+                                        jsonViewModel
+                                    )
+                                } else {
+                                    addTravelInDB(
+                                        mContext,
+                                        navController,
+                                        Travel,
+                                        TravelViewModel,
+                                        jsonViewModel
+                                    )
+                                }
                             }
                             Travel_clearAll()
                         } else {
@@ -357,13 +373,15 @@ fun Travel_clearAll() {
     price = ""
 }
 
-fun addTravelInDB(
+suspend fun addTravelInDB(
     context: Context,
     navController: NavHostController,
-    Travel: Travel,
-    TravelViewModel: TravelViewModel
+    travel: Travel,
+    TravelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
 ) {
-    TravelViewModel.addTravel(Travel)
+    TravelViewModel.addTravel(travel)
+    jsonViewModel.addTravel(travel)
     navController.popBackStack()
 }
 
@@ -371,7 +389,8 @@ fun updateTravelInDB(
     context: Context,
     navController: NavHostController,
     Travel: Travel,
-    TravelViewModel: TravelViewModel
+    TravelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
 ) {
     TravelViewModel.updateTravelDetails(Travel)
     navController.popBackStack()
