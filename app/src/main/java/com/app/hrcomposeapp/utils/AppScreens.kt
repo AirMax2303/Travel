@@ -6,6 +6,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class AppScreens(val title: String, val route: String, var icon: ImageVector) {
+
+    object HomeScreen : AppScreens("Путешествия", "home", Icons.Default.AccountCircle)
     object AddEditTravelScreen :
         AppScreens("Add/Edit Travel", "addEditTravelScreen", Icons.Default.Home)
 

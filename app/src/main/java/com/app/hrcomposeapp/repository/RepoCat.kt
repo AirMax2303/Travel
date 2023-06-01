@@ -19,5 +19,4 @@ class CategoryRepository(private val TravelDao: TravelDao) {
             categoryList.postValue(list)
         }
     }
-
 }

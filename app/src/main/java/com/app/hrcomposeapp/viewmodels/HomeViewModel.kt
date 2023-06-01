@@ -1,5 +1,6 @@
 package com.app.hrcomposeapp.viewmodels
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,8 +24,21 @@ class TravelViewModel @Inject constructor(private val travelRepository: TravelRe
         travelRepository.getAllTravels()
     }
 
-    fun getTravelsByCategory(category: String) {
-        travelRepository.getTravelsByCategory(category)
+    fun getTravelsByCategory(cat: String) {
+        Log.d("mylog", "columnindex.toString() ${category.value} ${columnIndex.value}")
+        this._category.value = cat
+//        category.value?.let { travelRepository.getTravelsByCategory(it) }
+        category.value?.let { columnIndex.value?.let { it1 ->
+            sort.value?.let { it2 ->
+                travelRepository.getSortTravelByIndex(it,
+                    it1, it2
+                )
+            }
+        } }
+    }
+
+    fun getTravelsByCategory2() {
+        this.category.value?.let { getTravelsByCategory(it) }
     }
 
     fun addListTravel(list: List<Travel>) {
@@ -80,8 +94,34 @@ class TravelViewModel @Inject constructor(private val travelRepository: TravelRe
 
     val travelList: LiveData<List<Travel>> = travelRepository.allTravels
     val foundTravel: LiveData<Travel> = travelRepository.foundTravel
-    val delStatus = MutableLiveData<Boolean>()
+//    var category by mutableStateOf("")
+
+    var _category = MutableLiveData<String>()
+    val category: LiveData<String> = _category
+
+//    var columnIndex by mutableStateOf(0)
+    var _columnIndex = MutableLiveData<Int>()
+    val columnIndex: LiveData<Int> = _columnIndex
+
+    fun setColumnSort(value: Int)
+    {
+        _columnIndex.value = value
+    }
+
+    var _sort = MutableLiveData<Int>()
+    val sort: LiveData<Int> = _sort
+
+    fun changeSort()
+    {
+        if (_sort.value == 0) {
+            _sort.value = 1
+        } else {
+            _sort.value = 0
+        }
+    }
+
     val addStatus = MutableLiveData<Boolean>()
+
 
 
     val listResponse: LiveData<List<TravelJSON>>
@@ -115,7 +155,7 @@ class TravelViewModel @Inject constructor(private val travelRepository: TravelRe
 
  */
     }
-
+/*
     fun addJSONTravel() {
         JSONLiveData.value!!.forEachIndexed { index, travelJSON ->
             run {
@@ -133,4 +173,6 @@ class TravelViewModel @Inject constructor(private val travelRepository: TravelRe
             }
         }
     }
+ */
+
 }

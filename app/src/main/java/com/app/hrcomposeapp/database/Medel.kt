@@ -33,7 +33,7 @@ data class Travel(
     var duration: String,
 
     @ColumnInfo(name = "price")
-    var price: String,
+    var price: Int,
 
     ) : Parcelable
 

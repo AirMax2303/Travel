@@ -12,6 +12,8 @@
     <string name="add_travel">Путешевствие</string>
     <string name="back">Назад</string>
     <string name="desc_add_fab">Добавить</string>
+    <string name="loading">Загрузка</string>
+    <string name="loading_failed">Ошибка</string>
 
 
 </resources>

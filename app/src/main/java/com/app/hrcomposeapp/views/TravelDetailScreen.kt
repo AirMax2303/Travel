@@ -94,7 +94,7 @@ fun TravelDetailScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = selectedTravel.price,
+                            text = selectedTravel.price.toString(),
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                         )
@@ -104,7 +104,7 @@ fun TravelDetailScreen(
                                 onClick = {
                                     travelViewModel.deleteTravel(selectedTravel)
                                     coroutineScope.launch {
-//                                        jsonViewModel.deleteTravel(selectedTravel)
+                                        jsonViewModel.deleteTravel(selectedTravel)
                                     }
                                     navController.popBackStack()
                                 }, modifier = Modifier.weight(1f)

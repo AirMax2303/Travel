@@ -151,7 +151,7 @@ fun JSONCard(travelViewModel: JSONViewModel, travel: Travel, navController: NavH
                 Spacer(modifier = Modifier.width(10.dp))
                 Column() {
                     Text(
-                        text = travel.price,
+                        text = travel.price.toString(),
                         fontSize = 18.sp,
                     )
                 }

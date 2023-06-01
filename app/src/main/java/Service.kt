@@ -34,7 +34,6 @@ interface ApiServiceAdd {
 
     @POST(".")
     @FormUrlEncoded
-//    suspend fun addTravel(@Body addJSON: AddJSON)
     suspend fun addTravel(@FieldMap params: Map<String,String>)
 
     companion object {
@@ -54,6 +53,28 @@ interface ApiServiceAdd {
     }
 }
 
+interface ApiServiceUpdate {
+
+    @POST(".")
+    @FormUrlEncoded
+    suspend fun addTravel(@FieldMap params: Map<String,String>)
+
+    companion object {
+        private var retrofit: ApiServiceUpdate? = null
+        private val interceptor = HttpLoggingInterceptor()
+        private val client = OkHttpClient.Builder().addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)).build()
+        fun getInstance(): ApiServiceUpdate {
+            if (retrofit == null) {
+                retrofit = Retrofit.Builder()
+                    .baseUrl("http://science-art.pro/travel_update.php/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(client)
+                    .build().create(ApiServiceUpdate::class.java)
+            }
+            return retrofit!!
+        }
+    }
+}
 
 interface ApiServiceDelete {
 
@@ -78,3 +99,13 @@ interface ApiServiceDelete {
         }
     }
 }
+
+
+/*
+
+//        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+//        .addConverterFactory(ScalarsConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+//        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+ */

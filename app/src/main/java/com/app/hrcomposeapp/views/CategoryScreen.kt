@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -39,24 +41,84 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.app.hrcomposeapp.R
 import com.app.hrcomposeapp.database.Category
+import com.app.hrcomposeapp.database.Travel
 import com.app.hrcomposeapp.utils.AppScreens
 import com.app.hrcomposeapp.utils.CustomToolbar
+import com.app.hrcomposeapp.viewmodels.CategoryUiState
 import com.app.hrcomposeapp.viewmodels.CategoryViewModel
+import com.app.hrcomposeapp.viewmodels.JSONUiState
+import com.app.hrcomposeapp.viewmodels.JSONViewModel
 import com.app.hrcomposeapp.viewmodels.TravelViewModel
 import kotlinx.coroutines.launch
 
 class CategoryScreen {
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun HomeScreen(
+    navController: NavHostController,
+    travelViewModel: TravelViewModel,
+    jsonViewModel: JSONViewModel,
+    categoryViewModel: CategoryViewModel,
+) {
+    travelViewModel.getAllTravels()
+    when (jsonViewModel.jsonUiState) {
+        is JSONUiState.Loading -> LoadingScreen()
+        is JSONUiState.Success -> {
+            if (travelViewModel.travelList.value?.isEmpty() == true) {
+                travelViewModel.addListTravel((jsonViewModel.jsonUiState as JSONUiState.Success).list)
+            }
+            CategoryScreen(navController, categoryViewModel)
+        }
+        is JSONUiState.Error -> CategoryScreen(navController, categoryViewModel)
+    }
+}
+
 @Composable
 fun CategoryScreen(
     navController: NavHostController,
     categoryViewModel: CategoryViewModel,
 ) {
-
     categoryViewModel.getCategoryes()
+    when(categoryViewModel.categoryUiState) {
+        is CategoryUiState.Loading -> LoadingScreen()
+        is CategoryUiState.Success -> _CategoryScreen(navController, categoryViewModel)
+        is CategoryUiState.Error -> ErrorScreen()
+    }
+}
 
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(R.drawable.loading_img),
+            contentDescription = stringResource(R.string.loading)
+        )
+    }
+}
+
+@Composable
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Text(stringResource(R.string.loading_failed))
+    }
+}
+
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+@Composable
+fun _CategoryScreen(
+    navController: NavHostController,
+    categoryViewModel: CategoryViewModel,
+) {
+
+//    categoryViewModel.getCategoryes()
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
     Scaffold(
@@ -97,19 +159,10 @@ fun CategoryScreen(
                             .wrapContentHeight(),
                         textAlign = TextAlign.Center
                     )
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Button(
-                        onClick = { navController.navigate(AppScreens.JSONScreen.route) },
-                    ) {
-                        Text(
-                            text = "Загрузить",
-                            fontSize = 16.sp,
-                        )
-                    }
-
                 }
             }
         },
+/*
         floatingActionButton = {
             Row() {
                 FloatingActionButton(onClick = {
@@ -121,7 +174,10 @@ fun CategoryScreen(
                     )
                 }
             }
-        })
+        }
+
+ */
+    )
 
 }
 
@@ -134,6 +190,11 @@ fun categoryCard(
     Card(
         modifier = Modifier
             .padding(10.dp)
+            .clickable {
+                navController.navigate(
+                    AppScreens.TravelScreen.routeWithArgs(category)
+                )
+            }
             .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
         backgroundColor = Color.White,
@@ -141,11 +202,6 @@ fun categoryCard(
     ) {
         Column(modifier = Modifier
             .padding(20.dp)
-            .clickable {
-                navController.navigate(
-                    AppScreens.TravelScreen.routeWithArgs(category)
-                )
-            }
         ) {
             Text(
                 text = category,

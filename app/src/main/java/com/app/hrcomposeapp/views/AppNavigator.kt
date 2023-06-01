@@ -23,8 +23,11 @@ fun AppRouter(
     travelViewModel: TravelViewModel,
     jsonViewModel: JSONViewModel,
 ) {
-    AnimatedNavHost(navController, startDestination = AppScreens.CategoryScreen.route) {
+    AnimatedNavHost(navController, startDestination = AppScreens.HomeScreen.route) {
 
+        composable(route = AppScreens.HomeScreen.route) {
+            HomeScreen(navController, travelViewModel, jsonViewModel, categoryViewModel)
+        }
         composable(route = AppScreens.CategoryScreen.route) {
             CategoryScreen(navController, categoryViewModel)
         }

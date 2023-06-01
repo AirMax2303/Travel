@@ -17,13 +17,26 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface CategoryUiState {
+    object Success : CategoryUiState
+    object Error : CategoryUiState
+    object Loading : CategoryUiState
+}
+
 @HiltViewModel
 class CategoryViewModel @Inject constructor(private val categoryRepository: CategoryRepository) :
     ViewModel() {
 
+    var categoryUiState: CategoryUiState by mutableStateOf(CategoryUiState.Loading)
+        private set
+    
     val categoryList: LiveData<List<Category>> = categoryRepository.categoryList
 
     fun getCategoryes() {
-        categoryRepository.getCategoryes()
+        viewModelScope.launch {
+            categoryUiState = CategoryUiState.Loading
+            categoryRepository.getCategoryes()
+            categoryUiState = CategoryUiState.Success
+        }
     }
 }

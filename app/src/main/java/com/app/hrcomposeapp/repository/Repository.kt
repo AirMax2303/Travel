@@ -1,5 +1,6 @@
 package com.app.hrcomposeapp.repository
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class TravelRepository(private val TravelDao: TravelDao) {
+class TravelRepository(private val travelDao: TravelDao) {
 
     val allTravels = MutableLiveData<List<Travel>>()
     val foundTravel = MutableLiveData<Travel>()
@@ -20,49 +21,55 @@ class TravelRepository(private val TravelDao: TravelDao) {
 
     fun addTravel(newTravel: Travel) {
         coroutineScope.launch(Dispatchers.IO) {
-            TravelDao.addTravel(newTravel)
+            travelDao.addTravel(newTravel)
         }
     }
 
     fun addListTravel(list: List<Travel>) {
         coroutineScope.launch(Dispatchers.IO) {
-            TravelDao.addListTravel(list)
+            travelDao.addListTravel(list)
         }
     }
 
     fun updateTravelDetails(newTravel: Travel) {
         coroutineScope.launch(Dispatchers.IO) {
-            TravelDao.updateTravelDetails(newTravel)
+            travelDao.updateTravelDetails(newTravel)
         }
     }
 
     fun getAllTravels() {
         coroutineScope.launch(Dispatchers.IO) {
-            allTravels.postValue(TravelDao.getAllTravels())
+            allTravels.postValue(travelDao.getAllTravels())
         }
     }
 
     fun getTravelsByCategory(category: String) {
         coroutineScope.launch(Dispatchers.IO) {
-            allTravels.postValue(TravelDao.getTravelsByCategory(category))
+            allTravels.postValue(travelDao.getTravelsByCategory(category))
+        }
+    }
+
+    fun getSortTravelByIndex(category: String, columnIndex: Int, sort: Int) {
+        coroutineScope.launch(Dispatchers.IO) {
+            allTravels.postValue(travelDao.getSortTravelByIndex(category, columnIndex, sort))
         }
     }
 
     fun deleteTravel(Travel: Travel) {
         coroutineScope.launch(Dispatchers.IO) {
-            TravelDao.deleteTravel(Travel)
+            travelDao.deleteTravel(Travel)
         }
     }
 
     fun deleteAllTravel(list: List<Travel>) {
         coroutineScope.launch(Dispatchers.IO) {
-            TravelDao.deleteAllTravel(list)
+            travelDao.deleteAllTravel(list)
         }
     }
 
     fun findTravelById(id: String) {
         coroutineScope.launch(Dispatchers.IO) {
-            foundTravel.postValue(TravelDao.findTravelById(id))
+            foundTravel.postValue(travelDao.findTravelById(id))
         }
     }
 }
